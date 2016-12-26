@@ -340,45 +340,4 @@ namespace Compiler2_59.Pro_3
     }
 }
 
-// Comment 
-/*
-            if (word[index] == '/' && word[index+1] == '*')
-            {
-                index++;
-                wordTemp = wordTemp + word[index];
-            }
 
-            while (word[index] != '*')
-            {
-                index++;
-                wordTemp = wordTemp + word[index];
-            }
-
-            index++;
-            if (word[index] == '*' && word[index + 1] == '/')
-            {
-                wordTemp = wordTemp + word[index];
-                index++;
-                wordTemp = wordTemp + word[index];
-                Console.WriteLine("------Comment------");
-            }
-
-            else
-            {
-                wordTemp = wordTemp + word[index];
-                index++; 
-                if (word[index] == '*' && word[index + 1] == '/')
-                {
-                    wordTemp = wordTemp + word[index];
-                    index++;
-                    wordTemp = wordTemp + word[index];
-                    Console.WriteLine("------Comment------");
-                }
-                else 
-                {
-                    wordTemp = wordTemp + word[index];
-                    Comment();
-                }
-
-            }
-            */
