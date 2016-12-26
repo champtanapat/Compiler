@@ -1,0 +1,14 @@
+﻿Program ;
+int x , i; 
+float j;
+string s;
+Func P1;
+begin
+ int A,b;
+ A = x + 3.5 
+ while( A + B  > C or D - E * 3 );
+ begin
+  A = B * C -D;
+ end
+ call P1();
+ end;
