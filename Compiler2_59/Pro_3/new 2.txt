@@ -1,0 +1,160 @@
+private void Comment()
+        {
+            int countCom = 1;
+            wordTemp = wordTemp + word[index];
+            // /
+            index++;
+            if (word[index] == '*')
+            {
+                wordTemp = wordTemp + word[index];
+                countCom++; // /*
+                index++;
+
+                // Dupica  */
+                // have /* find */
+                if (word[index] == '*')
+                {
+                    wordTemp = wordTemp + word[index];
+                    countCom++; 
+                    index++;
+                    if(word[index] == '/')
+                    {
+                        wordTemp = wordTemp + word[index];
+                        countCom = 0 ;
+                        Console.WriteLine("/*---------COMMENT----------*/");
+                    }
+
+                    // /****/ Commment
+                    // /***a OP
+                    else
+                    {   // /*** 
+                        if (word[index] == '*')
+                        {
+                            while (word[index] != '/')
+                            {
+                                if (word[index] == '$')
+                                {
+                                    index = index - countCom;
+                                    checkedOP = false;
+                                    countCom = 0;
+                                    Operator();
+                                    
+                                }
+                                // /******
+                                else
+                                {
+                                    wordTemp = wordTemp + word[index];
+                                    countCom++;
+                                    index++;
+                                }
+                            }
+                            //-- /****/
+                            if(word[index]=='/')
+                            {
+                                wordTemp = wordTemp + word[index];
+                                countCom = 0;
+                                Console.WriteLine("/*---------COMMENT----------*/");
+                            }
+                            //-- FINAL /***/
+                        }
+                        else
+                        {
+                            index = index - countCom;
+                            checkedOP = false;
+                            countCom = 0;
+                            Operator();
+                        }
+                    }
+                }
+                // /**a , /**/
+                // FINAL 
+
+
+                // /*a , /*a*/
+                else
+                {
+                    while (word[index]!='*' && word[index] != '$')
+                    {
+                        wordTemp = wordTemp + word[index];
+                        countCom++;
+                        index++;
+                    }
+
+                    // /*a* Dupica 
+                    //  have /* find */
+                    if (word[index] == '*')
+                    {
+                        wordTemp = wordTemp + word[index];
+                        countCom++;
+                        index++;
+                        if (word[index] == '/')
+                        {
+                            wordTemp = wordTemp + word[index];
+                            countCom = 0;
+                            Console.WriteLine("/*---------COMMENT----------*/");
+                        }
+                        // /*
+                        else
+                        {
+                            if (word[index] == '*')
+                            {
+                                while (word[index] != '/')
+                                {
+                                    if (word[index] == '$')
+                                    {
+                                        index = index - countCom;
+                                        checkedOP = false;
+                                        countCom = 0;
+                                        Operator();
+
+                                    }
+                                    // /******
+                                    else
+                                    {
+                                        wordTemp = wordTemp + word[index];
+                                        countCom++;
+                                        index++;
+                                    }
+                                }
+                                //-- /****/
+                                if (word[index] == '/')
+                                {
+                                    wordTemp = wordTemp + word[index];
+                                    countCom = 0;
+                                    Console.WriteLine("/*---------COMMENT----------*/");
+                                }
+                                //-- FINAL /***/
+
+                            }
+                            //-- /*a
+                            else 
+                            {
+                                index = index - countCom;
+                                checkedOP = false;
+                                countCom = 0;
+                                Operator();
+                            }
+                        }
+                    }
+
+                    // /*a
+                    else
+                    {
+                        index = index - countCom;
+                        checkedOP = false;
+                        countCom = 0;
+                        Operator();
+                    }
+
+                }
+                // END 
+
+            }
+
+            // FINAL
+            // -- /-
+            else
+            {
+                Operator();
+            }
+        }

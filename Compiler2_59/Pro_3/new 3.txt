@@ -1,0 +1,34 @@
+float_123
+int_as
+int_asint_const,string_const,float_const
+asint_const,
+ID int 
+asint_const,
+ 
+
+int123<=abv1.09<+12intfloat*123int
+
+intfloat
+a1? = ID ? 
+or 
+a = ID
+1 = int 
+
+int_constfloat_conststring_const
+
+Comment
+
+ 
+/* /**/ /*
+inta=2,b=10/a.*
+/* /**/ */
+
+/*/*/
+/*a
+no
+/*/**/
+comment
+
+a1a
+
+int1232l;adf;while()bool>=/*/-=beginend,call12>=1.2()float10a

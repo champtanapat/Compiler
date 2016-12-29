@@ -13,19 +13,14 @@ namespace Compiler2_59.Pro_3
         private int index = 0;
         private int tempCount = 0;
         private string sc;
-        private string errorTemp;
-
+        public bool checkedOP = true;
+        public bool testRW = false;
         public List<Token> list = new List<Token>();
-
+        public int countCom = 1;
 
         public Lexical(string sc)
         {
             this.sc = sc;
-        }
-
-        private void PrintShow(string p, string st)
-        {
-            Console.WriteLine("" + p + ":=\t" + st);
         }
 
         public void Word()
@@ -49,35 +44,69 @@ namespace Compiler2_59.Pro_3
                 case ',':
                     wordType = "SP";
                     list.Add(new Token(wordType, word[index].ToString()));
+                    wordType = "";
+                    wordTemp = "";
                     //PrintShow(wordType, word[index].ToString());
                     break;
                 case '+':
                 case '-':
                 case '*':
                 case '=':
+                
                     wordType = "OP";
                     list.Add(new Token(wordType, word[index].ToString()));
+                    wordType = "";
+                    wordTemp = "";
                     //PrintShow(wordType, word[index].ToString());
                     break;
-                case '/':
-                    if (word[index + 1] == '*')
+                
+                case '.':
+                    if (char.IsDigit(word[index + 1]) )
                     {
-                        wordTemp = wordTemp + word[index];
+                        
+                        Digit();
+                        wordType = "";
+                        wordTemp = "";
+                    }
+                    else
+                    {
+                        wordType = "OP";
+                        list.Add(new Token(wordType, word[index].ToString()));
+                        wordType = "";
+                        wordTemp = "";
+                    }
+                    break;
+                case '/':
+                    
+                    if (word[index + 1] == '*' && checkedOP)
+                    {
+                       
                         Comment();
                     }
                     else
                     {
                         wordType = "OP";
                         list.Add(new Token(wordType, word[index].ToString()));
+                        wordType = "";
+                        wordTemp = "";
                         //PrintShow(wordType, word[index].ToString());
                     }
                     break;
 
                 case '<':
                     EqualLessOrMore();
+                    wordType = "";
+                    wordTemp = "";
                     break;
                 case '>':
                     EqualLessOrMore();
+                    wordType = "";
+                    wordTemp = "";
+                    break;
+
+                case ' ':
+                case '\r':
+                case '\n':
                     break;
 
                 default:
@@ -89,9 +118,127 @@ namespace Compiler2_59.Pro_3
                     {
                         Letter();
                     }
+                    else if(word[index]=='.')
+                    {
+                        Digit();
+                    }
+                    else
+                    {
+                        Error(wordType,word[index].ToString());
+                    }
                     wordTemp = "";
                     wordType = "";
+                   
                     break;
+            }
+        }
+
+        private void Letter()
+        {
+           
+            if (char.IsLetter(word[index]) ) 
+                {
+                    while (char.IsLetterOrDigit(word[index]))
+                    {
+                        wordTemp = wordTemp + word[index];
+                        testRW = Reservedword(wordTemp);
+
+                        //--RW  int
+                        if (testRW)
+                        {
+                            wordType = "Reservedword";
+                            list.Add(new Token(wordType, wordTemp));
+                            wordTemp = "";
+                            wordType = "";
+                        }
+
+                        else
+                        {
+                            findID();
+                        }
+
+                        index++;
+                    }
+                //-- END WHILE
+
+                    index--;
+                    // aOP
+                    if(wordType=="ID")
+                    {
+                        list.Add(new Token(wordType, wordTemp));
+                        wordTemp = "";
+                        wordType = "";
+                    }
+                }
+
+        }
+              
+        private void findID()
+        {
+            if (wordType == "ID" && char.IsDigit(word[index]))
+            {
+                wordType = "ID";
+            }
+            // END FINAL
+
+            else
+            {
+                // find int123 
+                if (char.IsDigit(word[index]))
+                {
+                    wordTemp = "";
+                    Digit();
+                }
+                // int123
+                // END FINAL 
+
+                // find ID A
+                else
+                {
+                    wordType = "ID";
+                }
+                // ID A
+                // END FINAL
+
+            }
+        }
+
+        private void Digit()
+        {
+            
+            while (char.IsDigit(word[index]))
+            {
+                
+                wordTemp = wordTemp + word[index].ToString();
+                index++;
+            }
+            
+            if (word[index] != '.' && tempCount == 0)
+            {
+                wordType = "int_count";
+                index--;
+                list.Add(new Token(wordType, wordTemp));
+                wordTemp = "";
+                wordType = "";
+                //PrintShow(wordType, wordTemp);
+            }
+            else if (word[index] == '.' && tempCount == 0)
+            {
+                wordType = "float_count";
+                wordTemp = wordTemp + word[index].ToString();
+                index++;
+                tempCount++;
+                Digit();
+            }
+
+            else
+            {
+                tempCount--;
+                index--;
+                list.Add(new Token(wordType, wordTemp));
+                wordTemp = "";
+                wordType = "";
+                //PrintShow(wordType, wordTemp);
             }
         }
 
@@ -113,73 +260,7 @@ namespace Compiler2_59.Pro_3
                 //PrintShow(wordType, wordTemp);
             }
         }
-
-        private void Letter()
-        {
-            if (char.IsLetter(word[index]))
-            {
-                //--Find Reservedword and ID
-                while (char.IsLetterOrDigit(word[index]) || word[index] == '_')
-                {
-                    wordTemp = wordTemp + word[index].ToString();
-                    if (Reservedword(wordTemp))
-                    {
-                        wordType = "Reservedword";
-                    }
-                    else
-                    {
-                        wordType = "ID";
-                    }
-
-                    index++;
-                }
-                //--End While
-                // have Reservedword or ID 
-
-                //--check Next Reservedword and ID  have SP( , ; : )
-                if (!char.IsLetterOrDigit(word[index]))
-                {
-
-                    list.Add(new Token(wordType, wordTemp));
-                    //PrintShow(wordType, wordTemp);
-                    Operator();
-                }
-            }
-        }
-
-        private void Digit()
-        {
-
-            while (char.IsDigit(word[index]))
-            {
-                wordTemp = wordTemp + word[index].ToString();
-                index++;
-            }
-
-            if (word[index] != '.' && tempCount == 0)
-            {
-                wordType = "Int";
-                index--;
-                list.Add(new Token(wordType, wordTemp));
-                //PrintShow(wordType, wordTemp);
-            }
-            else if (word[index] == '.' && tempCount == 0)
-            {
-                wordType = "Float";
-                wordTemp = wordTemp + word[index].ToString();
-                index++;
-                tempCount++;
-                Digit();
-            }
-            else
-            {
-                tempCount--;
-                index--;
-                list.Add(new Token(wordType, wordTemp));
-                //PrintShow(wordType, wordTemp);
-            }
-        }
-
+        
         private bool Reservedword(string st)
         {
             switch (st)
@@ -200,11 +281,6 @@ namespace Compiler2_59.Pro_3
                 case "int":
                 case "float":
                 case "string":
-
-                    if (word[index + 1] == '_')
-                    {
-                        return false;
-                    }
                     return true;
                 default:
                     return false;
@@ -212,132 +288,208 @@ namespace Compiler2_59.Pro_3
             }
 
         }
-
+        
         private void Comment()
         {
-
-            if (word[index] == '/' && word[index + 1] == '*')
+            //int countCom = 1;
+            wordTemp = wordTemp + word[index];
+            // /
+            index++;
+            if (word[index] == '*')
             {
-                index++;
                 wordTemp = wordTemp + word[index];
+                countCom++; // /*
+                index++;
 
-                while (word[index] != '*')
+                // Dupica  */
+                // have /* find */
+                if (word[index] == '*')
                 {
                     wordTemp = wordTemp + word[index];
+                    countCom++; 
                     index++;
-                }
-
-                if (word[index] == '*' && word[index + 1] == '/')
-                {
-                    index++;
-                    wordTemp = wordTemp + word[index];
-                    if (word[index] == '*' && word[index + 1] == '/')
+                    if(word[index] == '/')
                     {
-                        Console.WriteLine("/*------Comment------*/");
+                        wordTemp = wordTemp + word[index];
+                        countCom = 0 ;
+                        Console.WriteLine("/*---------COMMENT----------*/");
                     }
+
+                    // /****/ Commment
+                    // /***a OP
                     else
-                    {
-                        Comment();
-                    }
-
-                }
-                else
-                {
-                    index++;
-                    wordTemp = wordTemp + word[index];
-                    Comment();
-                }
-
-            }
-            //--End if
-
-            else if (word[index] == '*' && word[index + 1] == '/')
-            {
-                index++;
-                wordTemp = wordTemp + word[index];
-                Console.WriteLine("/*------Comment------*/");
-            }
-            //--End else if
-
-            else
-            {
-                index++;
-                wordTemp = wordTemp + word[index];
-                if (word[index] == '*' && word[index + 1] == '/')
-                {
-                    index++;
-                    wordTemp = wordTemp + word[index];
-                    Console.WriteLine("/*------Comment------*/");
-                }
-                else
-                {
-                    if (word[index] == '$')
-                    {
-                        errorTemp = "Comment";
-                        Error(errorTemp, wordTemp);
-
-                    }
-                    // *vvv*$
-                    else if (word[index + 1] == '$')
-                    {
-                        errorTemp = "Comment";
-                        Error(errorTemp, wordTemp);
-                    }
-                    // *vvv* $ว่างตัวสุดท้าย
-                    else if (word[index + 1] == ' ')
-                    {
-                        while (word[index + 1] == ' ' || word[index + 1] == '\r' || word[index + 1] == '\n')
+                    {   // /*** 
+                        if (word[index] == '*')
                         {
-                            index++;
-                            wordTemp = wordTemp + word[index];
-                        }
-                        if (char.IsLetterOrDigit(word[index + 1]))
-                        {
-                            wordTemp = wordTemp + word[index];
-                            Comment();
-                        }
-                        else if (word[index + 1] == ';' || word[index + 1] == '=' || word[index + 1] == '+' || word[index + 1] == '-'
-                            || word[index + 1] == '*' || word[index + 1] == '.' || word[index + 1] == '(' || word[index + 1] == ')'
-                            || word[index + 1] == '>' || word[index + 1] == '<')
-                        {
-                            //if (word[index + 1])
-                            wordTemp = wordTemp + word[index];
-                            Comment();
+                            while (word[index] != '/')
+                            {
+                                if (word[index] == '$')
+                                {
+                                    index = index - countCom;
+                                    checkedOP = false;
+                                    countCom = 0;
+                                    Operator();
+                                    
+                                }
+                                // /******
+                                else
+                                {
+                                    wordTemp = wordTemp + word[index];
+                                    countCom++;
+                                    index++;
+                                }
+                            }
+                            //-- /****/
+                            if(word[index]=='/')
+                            {
+                                wordTemp = wordTemp + word[index];
+                                countCom = 0;
+                                Console.WriteLine("/*---------COMMENT----------*/");
+                            }
+                            //-- FINAL /***/
                         }
                         else
                         {
-                            errorTemp = "Comment";
-                            Error(errorTemp, wordTemp);
+                            index = index - countCom;
+                            checkedOP = false;
+                            countCom = 0;
+                            Operator();
                         }
-
-                    }
-                    else
-                    {
-                        index++;
-                        wordTemp = wordTemp + word[index];
-                        Comment();
                     }
                 }
-            }
-            //--End else 
-        }
+                // /**a , /**/
+                // FINAL 
 
-        private void Error(String st, string st2)
+
+                // /*a , /*a*/
+                else
+                {
+                    while (word[index]!='*' && word[index] != '$')
+                    {
+                        wordTemp = wordTemp + word[index];
+                        countCom++;
+                        index++;
+                    }
+
+                    // /*a* Dupica 
+                    //  have /* find */
+                    if (word[index] == '*')
+                    {
+                        wordTemp = wordTemp + word[index];
+                        countCom++;
+                        index++;
+                        if (word[index] == '/')
+                        {
+                            wordTemp = wordTemp + word[index];
+                            countCom = 0;
+                            Console.WriteLine("/*---------COMMENT----------*/");
+                        }
+                        // /*
+                        else
+                        {
+                            if (word[index] == '*')
+                            {
+                                while (word[index] != '/')
+                                {
+                                    if (word[index] == '$')
+                                    {
+                                        index = index - countCom;
+                                        checkedOP = false;
+                                        countCom = 0;
+                                        Operator();
+
+                                    }
+                                    // /******
+                                    else
+                                    {
+                                        wordTemp = wordTemp + word[index];
+                                        countCom++;
+                                        index++;
+                                    }
+                                }
+                                //-- /****/
+                                if (word[index] == '/')
+                                {
+                                    wordTemp = wordTemp + word[index];
+                                    countCom = 0;
+                                    Console.WriteLine("/*---------COMMENT----------*/");
+                                }
+                                //-- FINAL /***/
+
+                            }
+                            //-- /*a
+                            else 
+                            {
+                                index = index - countCom;
+                                checkedOP = false;
+                                countCom = 0;
+                                Operator();
+                            }
+                        }
+                    }
+
+                    // /*a
+                    else
+                    {
+                        index = index - countCom;
+                        checkedOP = false;
+                        countCom = 0;
+                        Operator();
+                    }
+
+                }
+                // END 
+
+            }
+
+            // FINAL
+            // -- /-
+            else
+            {
+                Operator();
+            }
+        }
+        
+        private void Error(string type, string word)
         {
-            Console.WriteLine("!!!" + st + "Error:\t" + st2);
+            Console.WriteLine("=====================ERROR===========================");
+            Console.WriteLine("!!!" + type + "Error:\t" + word);
+            Console.WriteLine("==================END ERROR==========================");
+            Console.WriteLine("\n");
         }
 
         public void showLexical()
         {
             Console.WriteLine("=====================================================");
-            Console.WriteLine("----------------Word------------Type----------------");
+            Console.WriteLine("----------------Word------------Type-----------------");
             foreach (var item in list)
             {
                 Console.WriteLine("\t\t"+item.getWord() + "\t\t" + item.getType());
             }
             Console.WriteLine("=====================================================");
         }
-    }
-}
 
+        private void PrintShow(string type, string word)
+        {
+            Console.WriteLine("" + type + ":=\t" + word);
+        }
+        
+        public void showIntput()
+        {
+            int i = 0;
+
+            Console.WriteLine("=====================SHOWINPUT=======================");
+            while (sc[i] != '$')
+            {
+                Console.Write("" + sc[i]);
+                i++;
+            }
+            Console.Write("\n");
+            Console.WriteLine("======================ENDSHOW=========================");
+            Console.Write("\n");
+        }
+
+    }
+    
+}
 

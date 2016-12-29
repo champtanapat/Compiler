@@ -1,0 +1,24 @@
+ตัวแปร (Variable)
+RWติดID = RW ID
+IDติดRW = ID  
+
+inta1 = int RW :  a1 ID
+aint  = aint ID
+
+Rw ID = RW ID 
+ID Rw = ID RW
+
+
+or and 
+===============
+
+inta1()
+int a1() 
+int12float
+
+================
+inta
+int1
+
+CorD
+int1floatorand 
