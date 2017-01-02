@@ -7,9 +7,8 @@ namespace Compiler2_59.Pro_3
 {
     class Token
     {
-        private string type;
-
-        private string wordToken;
+        public string type;
+        public string wordToken;
 
         public Token(string Type,string wordToken)
         {

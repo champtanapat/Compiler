@@ -1,1 +1,2 @@
-﻿{int}
+﻿Program ;
+string "123" , 
