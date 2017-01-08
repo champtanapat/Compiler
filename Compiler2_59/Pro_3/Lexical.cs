@@ -30,11 +30,9 @@ namespace Compiler2_59.Pro_3
                 Operator();
                 index++;
             }
-            if(word[index] == '$')
-            {
 
-                list.Add(new Token("$","$"));
-            }
+           list.Add(new Token("$","$"));
+           
         }
 
         private void Operator()
