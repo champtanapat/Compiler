@@ -1,2 +1,14 @@
 ﻿Program ;
-string "123" , 
+int x , i; 
+float j;
+string s;
+Func P;
+  begin
+  int A,b;
+  A = x + 3.5 ;
+	while( A + B  > C or D - E * 3 )
+	begin
+	end;
+
+  call T();
+  end;

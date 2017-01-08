@@ -30,6 +30,11 @@ namespace Compiler2_59.Pro_3
                 Operator();
                 index++;
             }
+            if(word[index] == '$')
+            {
+
+                list.Add(new Token("$","$"));
+            }
         }
 
         private void Operator()
@@ -180,7 +185,7 @@ namespace Compiler2_59.Pro_3
             bool testRW = false;
             if (char.IsLetter(word[index]))
             {
-                while (char.IsLetterOrDigit(word[index]))
+                while (char.IsLetter(word[index])) //char.IsLetterOrDigit(word[index])
                 {
                     wordTemp = wordTemp + word[index];
                     testRW = Reservedword(wordTemp);
@@ -196,7 +201,9 @@ namespace Compiler2_59.Pro_3
 
                     else
                     {
-                        findID();
+                        wordType = "ID";
+                        //findID();
+
                     }
 
                     index++;
@@ -215,6 +222,7 @@ namespace Compiler2_59.Pro_3
 
         }
 
+        /*
         private void findID()
         {
             if (wordType == "ID" && char.IsDigit(word[index]))
@@ -244,6 +252,7 @@ namespace Compiler2_59.Pro_3
 
             }
         }
+        */
 
         private void Digit()
         {
