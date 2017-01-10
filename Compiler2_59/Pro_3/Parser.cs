@@ -10,6 +10,7 @@ namespace Compiler2_59.Pro_3
         private List<Token> list;
         private Token current;
         private int index = 0;
+        
         public Parser(List<Token> list)
         {
             this.list = list;
@@ -50,14 +51,20 @@ namespace Compiler2_59.Pro_3
                 {
                     syntax("S()", current.wordToken);
                 }
+
             }
             else if (current.wordToken == "$")
             {
-
+                
             }
             else
             {
                 syntax("S()", current.wordToken);
+            }
+
+            if (current.wordToken == "$")
+            {
+                Console.WriteLine("Syntax True");
             }
         }
 
@@ -292,7 +299,7 @@ namespace Compiler2_59.Pro_3
         private void E()
         {
             if (current.wordToken == "*" || current.wordToken == "/" || current.wordToken == "-" || current.wordToken == "+"
-                || current.wordToken == "and" || current.wordToken == "or" || current.wordToken == ">" || current.wordToken == ">=")
+                || current.wordToken == "and" || current.wordToken == "or" || current.wordToken == ">" || current.wordToken == ">=" || current.wordToken == "<" || current.wordToken == ">")
             {
                 printshow(current.wordToken);
                 current = getToken();

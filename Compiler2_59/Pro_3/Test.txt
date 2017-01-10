@@ -2,4 +2,12 @@
 int x , i; 
 float j;
 string s;
-int a1
+Func A;
+ begin 
+ a = a+b*i/1;
+ while(a > b and a < i or b >= i)
+ begin
+ a = a+b*i/1;
+ end;
+ call A();
+ end;
