@@ -46,6 +46,7 @@
     <Compile Include="Pro_1\Prog_1.cs" />
     <Compile Include="Pro_1\Prog_1_2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pro_3\In_Post_fix.cs" />
     <Compile Include="Pro_3\Lexical.cs" />
     <Compile Include="Pro_3\Parser.cs" />
     <Compile Include="Pro_3\Token.cs" />
