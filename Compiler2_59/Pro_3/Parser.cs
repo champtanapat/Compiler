@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 namespace Compiler2_59.Pro_3
 {
     class Parser
@@ -10,7 +10,11 @@ namespace Compiler2_59.Pro_3
         private List<Token> list;
         private Token current;
         private int index = 0;
-        
+
+        private string temp_inpost = "";
+
+        public ArrayList myAL = new ArrayList();
+         
         public Parser(List<Token> list)
         {
             this.list = list;
@@ -33,7 +37,7 @@ namespace Compiler2_59.Pro_3
 
         public void S()
         {
-            //word.getWord();
+            
             current = getToken();
             if (current.wordToken == "Program")
             {
@@ -44,7 +48,6 @@ namespace Compiler2_59.Pro_3
                     printshow(current.wordToken);
                     current = getToken();
                     T();
-                    //current = getToken();
                     F();
                 }
                 else
@@ -118,13 +121,12 @@ namespace Compiler2_59.Pro_3
                 printshow(current.wordToken);
                 current = getToken();
                 ID();
-                //current = getToken();
+                
                 B();
             }
             else if (current.wordToken == ";")
             {
                 printshow(current.wordToken);
-                //current = getToken();
             }
             else 
             {
@@ -250,7 +252,6 @@ namespace Compiler2_59.Pro_3
 
         private void ID()
         {
-            //if(current.type == "int_const" || current.type == "float_const" || current.type == "string_const" )
             if (current.type == "ID")
             {
                 printshow(current.wordToken);
@@ -266,10 +267,12 @@ namespace Compiler2_59.Pro_3
         {
             if (current.type == "ID")
             {
+                myAL.Add(current.wordToken);
                 printshow(current.wordToken);
                 current = getToken();
                 if (current.wordToken == "=")
                 {
+                    myAL.Add(current.wordToken);
                     printshow(current.wordToken);
                     current = getToken();
                     I();
@@ -296,19 +299,54 @@ namespace Compiler2_59.Pro_3
             }
         }
 
-        private void E()
+        public void E()
         {
             if (current.wordToken == "*" || current.wordToken == "/" || current.wordToken == "-" || current.wordToken == "+"
-                || current.wordToken == "and" || current.wordToken == "or" || current.wordToken == ">" || current.wordToken == ">=" || current.wordToken == "<" || current.wordToken == ">")
+                || current.wordToken == "and" || current.wordToken == "or" || current.wordToken == ">" || current.wordToken == ">=" || current.wordToken == "<" || current.wordToken == ">" || current.wordToken == "<=")
             {
-                printshow(current.wordToken);
-                current = getToken();
-                
-                I();
-                E();
+                if (current.wordToken == "and")
+                {
+                    current.wordToken = "&&";
+                    temp_inpost = temp_inpost + current.wordToken; 
+                    myAL.Add("&&");
+                    printshow(current.wordToken);
+                    current = getToken();
+                    I();
+                    E();
+                }
+                else if (current.wordToken == "or")
+                {
+                    current.wordToken = "||";
+                    temp_inpost = temp_inpost + current.wordToken;
+                    myAL.Add("||");
+                    printshow(current.wordToken);
+                    current = getToken();
+                    I();
+                    E();
+                }
+                else
+                {
+                    temp_inpost = temp_inpost + current.wordToken;
+                    myAL.Add(current.wordToken);
+                    printshow(current.wordToken);
+                    current = getToken();
+                    I();
+                    E();
+                }
             }
             else if(current.wordToken == ";" || current.wordToken == ")" )
             {
+
+                myAL.Add(current.wordToken);
+                /*In_Post_fix sa = new In_Post_fix();
+                sa.In_Postfix_2();
+                */
+                //sa.In_Postfix_2(myAL);
+                //sa.In_Postfix(temp_inpost);
+                //temp_inpost = "";
+                //In_Postfix();
+                //myAL.Clear();
+
 
             }
             else
@@ -317,15 +355,19 @@ namespace Compiler2_59.Pro_3
             }
 
         }
-
+        
         private void I()
         {
             if(current.type=="ID")
             {
+                temp_inpost = temp_inpost + current.wordToken;
+                myAL.Add(current.wordToken);
                 ID();
             }
             else if(current.type == "int_const" || current.type == "float_const" || current.type == "string_const")
             {
+                temp_inpost = temp_inpost + current.wordToken;
+                myAL.Add(current.wordToken);
                 printshow(current.wordToken);
                 current = getToken();
             }
@@ -346,7 +388,6 @@ namespace Compiler2_59.Pro_3
                     printshow(current.wordToken);
                     current = getToken();
                     I();
-                    //current = getToken();
                     E();
                     current = getToken();
                     if (current.wordToken == "begin")
@@ -389,6 +430,7 @@ namespace Compiler2_59.Pro_3
                 syntax("W()", current.wordToken);
             }
         }
-    }
+        
+        }
         
 }

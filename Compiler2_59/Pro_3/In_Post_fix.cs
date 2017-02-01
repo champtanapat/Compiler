@@ -1,142 +1,167 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Compiler2_59.Pro_3
 {
-    class In_Post_fix
+    public class In_Post_fix
     {
-        Stack<char> mystack = new Stack<char>();
 
-        public int priority(char ch)
+        Stack<string> mystack = new Stack<string>();
+        ArrayList arrayList1 = new ArrayList();
+        ArrayList arrayPost = new ArrayList();
+        private string postfix = "";
+        private string infix = "";
+        private int counttemp = 0;
+        private string T = "";
+
+        public int priority(string ch)
         {
             int temp = 0;
-            if (ch == '*' || ch == '/')
+            if (ch == "*" || ch == "/")
             {
                 temp = 1;
             }
-            else if (ch == '+' || ch == '-')
+            else if (ch == "+" || ch == "-")
             {
                 temp = 2;
             }
-            else if (ch == '|' || ch == '&')
+            else if (ch == ">" || ch == "<" || ch == "<=" || ch == ">=")
             {
                 temp = 3;
+            }
+            else if(ch =="=")
+            {
+                temp = 4;
+            }
+            else if (ch == "&&" || ch == "&")
+            {
+                temp = 5;
+            }
+            else if (ch == "||" || ch == "|")
+            {
+                temp = 6;
             }
             return temp;
         }
 
-        public void In_Postfix()
+        public void In_Postfix(ArrayList arraylistTemp)
         {
-            string infix = "a|b-c/d+f*j"; // a/b*c|d"; // "a*b+c" "a+b*c" "a+b-c" "a-b+c"  "a*b/c" "a/b*c" "a*b+c/d" "a/b+c*d" "a+b*c-d" "a+b-c/d+f*j" "a|b-c/d+f*j"
-
-            string postfix = "";
-
-            for (int i = 0; i < infix.Length; i++)
+             postfix = "";
+             infix = "";
+             int count_temp = 0 ;
+            foreach (string i in arraylistTemp)
             {
-                if(infix[i] == '|' || infix[i]=='&' || infix[i] == '+' || infix[i] == '-' || infix[i] == '*' || infix[i] == '/' )
-                {
-                    while(mystack.Count != 0 && priority(mystack.Peek() ) <= priority(infix[i]) )
+                    count_temp++;
+                    if (i == "||" || i == "&&" || i == "+" || i == "-" || i == "*" || i == "/" || i == ">" || i == "<" || i == "<=" || i == ">=" || i == "=")
                     {
-                        
-                        postfix = postfix + mystack.Peek(); 
-                        mystack.Pop();
+                        infix = infix + i;
+                        while (mystack.Count != 0 && priority(mystack.Peek().ToString()) <= priority(i))
+                        {
+                            postfix = postfix + mystack.Peek();
+                            arrayPost.Add(mystack.Peek());
+                            mystack.Pop();
+                        }
+                        mystack.Push(i);
                     }
+                    
+                    else if(i ==";" || i==")")
+                    {
+                        printIn_Postfix();/*
+                        counttemp = 0;
+                        postfix_Tree(arrayPost);
+                        arrayPost.Clear();
+                        mystack.Clear();
+                        */
+                        arrayPost.Add(i);
+                        postfix = "";
+                        infix   = "";
+                    }
+                    else
+                    {
+                        infix = infix + i;
+                        postfix = postfix + i;
+                        arrayPost.Add(i);                    
+                    }
+            }// end loop for  
+        }
 
-                    mystack.Push(infix[i]);
+        public void printIn_Postfix()
+        {
+            string temp; 
+
+            while (mystack.Count != 0)
+            {
+                temp = mystack.Pop();
+                postfix = postfix + temp;
+                arrayPost.Add(temp);
+            }
+            Console.WriteLine("============Infix_To_Postfix============");
+            Console.WriteLine("infix    := " + infix);
+            Console.WriteLine("postfix  := " + postfix);
+            Console.WriteLine("========================================");
+            
+        }
+
+        public void postfix_Tree()
+        {
+            string opcode = "";
+            string R = "";
+            string L = "";
+            string temp = ""; 
+            foreach (string i in arrayPost)
+            {   
+                if (i == "||" || i == "&&" || i == "+" || i == "-" || i == "*" || i == "/" || i == ">" || i == "<" || i == "<=" || i == ">=" || i == "=")
+                {
+                    if (i == "=")
+                    {
+                        R = mystack.Pop();
+                        L = mystack.Pop();
+                        //Console.WriteLine("=" + "\t" + L + "\t_" + "\t" +R); // +"\t"+mystack.Pop());
+                        printTree("=",L,"_",R);
+                    }
+                    else
+                    {
+                        opcode = i;
+                        R = mystack.Pop();
+                        L = mystack.Pop();
+                        temp = tempT();
+                        //Console.WriteLine("" + opcode + "\t" + L + "\t" + R + "\t" + temp);
+                        printTree(opcode,L,R,temp);
+                        mystack.Push(temp);
+                    }
+                        
+                    
+                }
+                else if(i == ";" || i == ")")
+                {
+                    Console.WriteLine("========================================");
+                    mystack.Clear();
+                    counttemp = 0;
                 }
                 else
                 {
-                    postfix = postfix + infix[i];
+                    mystack.Push(i);
                 }
-            } // end loop for 
-
-            while(mystack.Count!=0 )
-            {
-                postfix = postfix + mystack.Pop();
-            }
-            Console.WriteLine(postfix);
+               
+            }// end loop for  
+           
         }
-        
-    }
 
-}
-
-/*
- public void In_Post()
+        public string tempT()
         {
-            string infix = "";
-            string postfix = "";
-            string tempst = "";
-            string sc = "a|b-c/d+f*j";// "a/b*c|d"; // "a*b+c" "a+b*c" "a+b-c" "a-b+c"  "a*b/c" "a/b*c" "a*b+c/d" "a/b+c*d" "a+b*c-d" "a+b-c/d+f*j" "a|b-c/d+f*j"
-            int itemp = 0;
-            bool check = false;
-
-            bool check2 = true;
-            for (int i = 0; i < sc.Length; i++)
-            {
-                infix = infix + sc[i];
-                switch (sc[i])
-                {
-                    case '+':
-                    case '-':
-                    case '*':
-                    case '/':
-                    case '|':
-                    case '&':
-                        if (mystack.Count != 0)
-                        {
-                            if (priority(sc[i]) < priority(mystack.Peek()))
-                            {
-                                tempst = sc[i].ToString();
-                                check = true;
-                            }
-                            else if (priority(sc[i]) == priority(sc[itemp]))
-                            {
-                                postfix = postfix + mystack.Pop();
-                                mystack.Push(sc[i]);
-                                itemp = i;
-                                check = false;
-                            }
-                            else
-                            {
-                                postfix = postfix + mystack.Pop();
-                                mystack.Push(sc[i]);
-                                itemp = i;
-                                check = false;
-                            }
-                        }
-                        else
-                        {
-                            mystack.Push(sc[i]);
-                            itemp = i;
-                        }
-                        break;
-                    default:
-                        postfix = postfix + sc[i];
-                        if (check)
-                        {
-                            postfix = postfix + tempst;
-                            check = false;
-                        }
-                        break;
-                }
-            } //end loop for 
-
-            if (check)
-            {
-                postfix = postfix + tempst;
-                postfix = postfix + mystack.Pop();
-            }
-            else
-            {
-                postfix = postfix + mystack.Pop();
-            }
-            Console.WriteLine("infix : " + infix);
-            Console.WriteLine("postfix: " + postfix);
-
+            counttemp++;
+            return "T"+counttemp;
         }
-        */
 
+        public void printTree(string op,string operand1,string operand2,string result)
+        {
+            Console.WriteLine("" +op+ "\t" + operand1 + "\t" +operand2+ "\t" + result);
+           
+        } 
+            
+    }
+}
 
