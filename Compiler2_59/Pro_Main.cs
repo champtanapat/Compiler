@@ -23,9 +23,13 @@ namespace Compiler2_59
             parser.S();
 
             In_Post_fix test= new In_Post_fix();
-            test.In_Postfix(parser.myAL);
-            test.postfix_Tree();
+            test.Postfix(parser.myAL);
+            test.printInfix();
+            test.printPostfix_();
 
+            test.Tree();
+            test.printTree_();
+            
 
         }
         
